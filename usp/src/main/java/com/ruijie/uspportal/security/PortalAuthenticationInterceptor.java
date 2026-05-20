@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 /**
@@ -55,14 +56,29 @@ public class PortalAuthenticationInterceptor implements HandlerInterceptor {
         if (HttpMethod.OPTIONS.matches(request.getMethod())) {
             return false;
         }
-        String path = resolveApplicationPath(request);
-        for (String pattern : whitelist) {
-            if (PATH_MATCHER.match(pattern, path)) {
-                return false;
+        for (String candidatePath : resolveCandidatePaths(request)) {
+            for (String pattern : whitelist) {
+                if (PATH_MATCHER.match(pattern, candidatePath)) {
+                    return false;
+                }
             }
         }
         return true;
     }
+
+    private List<String> resolveCandidatePaths(HttpServletRequest request) {
+        LinkedHashSet<String> candidates = new LinkedHashSet<>();
+        String applicationPath = resolveApplicationPath(request);
+        if (StringUtils.hasText(applicationPath)) {
+            candidates.add(applicationPath);
+        }
+        String requestUri = request.getRequestURI();
+        if (StringUtils.hasText(requestUri)) {
+            candidates.add(requestUri);
+        }
+        return new ArrayList<>(candidates);
+    }
+
     private String resolveApplicationPath(HttpServletRequest request) {
         String requestUri = request.getRequestURI();
         String contextPath = request.getContextPath();
