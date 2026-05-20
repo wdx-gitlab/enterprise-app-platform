@@ -1,0 +1,138 @@
+-- DAP Engine 内置主题数据初始化
+-- V2: 初始化 sys_user / sys_org 的 subject 记录及字段元数据
+-- 注意：sys_user / sys_org 表结构由外部手动管理，不纳入 Flyway
+
+-- ============================================================
+-- 1. 插入内置主题 (dap_sys_subject)
+-- ============================================================
+INSERT INTO dap_sys_subject (tenant_id, app_code, code, name, description, status, is_tree, is_built_in, is_delete, created_by, updated_by)
+VALUES ('', '', 'sys_user', '用户', '内置用户主数据，同步自人力系统', 1, 0, 1, 0, 'system', 'system');
+
+INSERT INTO dap_sys_subject (tenant_id, app_code, code, name, description, status, is_tree, is_built_in, is_delete, created_by, updated_by)
+VALUES ('', '', 'sys_org', '组织', '内置组织主数据，同步自人力系统', 1, 1, 1, 0, 'system', 'system');
+
+-- ============================================================
+-- 2. sys_org 字段元数据 (dap_sys_metadata_config)
+-- ============================================================
+INSERT INTO dap_sys_metadata_config (tenant_id, app_code, subject_id, subject_code, subject_name, field_name, field_type, field_label, required, max_length, sort_order, is_delete, created_by, updated_by) VALUES
+-- 系统字段（与 upsertSystemFields 保持一致：code/name 必有，parent_code 仅树形主题）
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_org'), 'sys_org', '组织', 'code',            'STRING', '编码',     0, 128, -100, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_org'), 'sys_org', '组织', 'name',            'STRING', '名称',     0, 128,  -99, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_org'), 'sys_org', '组织', 'parent_code',     'STRING', '上级编码', 0, 128,  -98, 0, 'system', 'system'),
+-- 自定义字段
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_org'), 'sys_org', '组织', 'department_code',          'STRING',   '部门编码',       1, 100,  1,  0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_org'), 'sys_org', '组织', 'department_name',          'STRING',   '部门名称',       0, 200,  2,  0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_org'), 'sys_org', '组织', 'department_en_name',       'STRING',   '部门英文名',     0, 200,  3,  0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_org'), 'sys_org', '组织', 'department_level',         'INT',      '部门层级',       0,   0,  4,  0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_org'), 'sys_org', '组织', 'department_type_code',     'STRING',   '部门类型编码',   0,  50,  5,  0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_org'), 'sys_org', '组织', 'department_type',          'STRING',   '部门类型',       0, 100,  6,  0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_org'), 'sys_org', '组织', 'department_category',      'STRING',   '部门类别',       0, 100,  7,  0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_org'), 'sys_org', '组织', 'parent_org_id',            'INT',      '上级组织ID',     0,   0,  8,  0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_org'), 'sys_org', '组织', 'parent_department_code',   'STRING',   '上级部门编码',   0, 100,  9,  0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_org'), 'sys_org', '组织', 'parent_department_name',   'STRING',   '上级部门名称',   0, 200, 10,  0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_org'), 'sys_org', '组织', 'org_path',                 'STRING_LONG', '组织路径',    0, 500, 11,  0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_org'), 'sys_org', '组织', 'manage_user_id',           'STRING',   '负责人用户ID',   0, 100, 12,  0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_org'), 'sys_org', '组织', 'manage_staff_no',          'STRING',   '负责人工号',     0, 100, 13,  0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_org'), 'sys_org', '组织', 'manage_name',              'STRING',   '负责人姓名',     0, 200, 14,  0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_org'), 'sys_org', '组织', 'portion_manage_user_id',   'STRING',   '分管负责人用户ID', 0, 100, 15, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_org'), 'sys_org', '组织', 'portion_manage_staff_no',  'STRING',   '分管负责人工号', 0, 100, 16,  0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_org'), 'sys_org', '组织', 'portion_manage_name',      'STRING',   '分管负责人姓名', 0, 200, 17,  0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_org'), 'sys_org', '组织', 'is_enable',                'INT',      '是否启用',       0,   0, 18,  0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_org'), 'sys_org', '组织', 'create_time',              'DATETIME', '创建时间(HCM)',   0,   0, 19,  0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_org'), 'sys_org', '组织', 'department_hrbp_list',     'TEXT',     'HRBP列表',       0,   0, 20,  0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_org'), 'sys_org', '组织', 'hcm_payload_json',         'TEXT',     'HCM原始数据',    0,   0, 21,  0, 'system', 'system');
+
+-- ============================================================
+-- 3. sys_user 字段元数据 (dap_sys_metadata_config)
+-- ============================================================
+INSERT INTO dap_sys_metadata_config (tenant_id, app_code, subject_id, subject_code, subject_name, field_name, field_type, field_label, required, max_length, sort_order, is_delete, created_by, updated_by) VALUES
+-- 系统字段（code/name，sys_user 非树形，无 parent_code）
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'code',           'STRING', '编码', 0, 128, -100, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'name',           'STRING', '名称', 0, 128,  -99, 0, 'system', 'system'),
+-- 自定义字段
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'org_id',                              'INT',      '所属组织ID',       0,   0,   1, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'staff_no',                            'STRING',   '工号',             0, 100,   2, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'user_id',                             'STRING',   '用户ID',           0, 100,   3, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'staff_company_name',                  'STRING',   '所属公司',         0, 200,   4, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'staff_name',                          'STRING',   '姓名',             0, 200,   5, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'staff_en_name',                       'STRING',   '英文名',           0, 200,   6, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'staff_status',                        'INT',      '员工状态',         0,   0,   7, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'card_num',                            'STRING',   '证件号码',         0, 100,   8, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'card_type_code',                      'STRING',   '证件类型编码',     0, 100,   9, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'card_type',                           'STRING',   '证件类型',         0, 100,  10, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'staff_email',                         'STRING',   '工作邮箱',         0, 200,  11, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'staff_type_code',                     'STRING',   '员工类型编码',     0, 100,  12, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'staff_type',                          'STRING',   '员工类型',         0, 100,  13, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'staff_photo',                         'STRING_LONG', '头像',          0, 500,  14, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'personal_email',                      'STRING',   '个人邮箱',         0, 200,  15, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'personal_mobile',                     'STRING',   '个人手机',         0,  50,  16, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'join_date',                           'DATETIME', '入职日期',         0,   0,  17, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'join_job_date',                       'DATETIME', '到岗日期',         0,   0,  18, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'nation_code',                         'STRING',   '民族编码',         0, 100,  19, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'nation',                              'STRING',   '民族',             0, 100,  20, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'country_and_area_code',               'STRING',   '国家地区编码',     0, 100,  21, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'country_and_area',                    'STRING',   '国家地区',         0, 100,  22, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'work_place_code',                     'STRING',   '工作地点编码',     0, 100,  23, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'work_place',                          'STRING',   '工作地点',         0, 200,  24, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'office_place_code',                   'STRING',   '办公地点编码',     0, 100,  25, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'office_place',                        'STRING',   '办公地点',         0, 200,  26, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'birthday',                            'DATETIME', '生日',             0,   0,  27, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'educational_background_code',         'STRING',   '学历编码',         0, 100,  28, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'educational_background',              'STRING',   '学历',             0, 100,  29, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'marriage_code',                       'STRING',   '婚姻状况编码',     0, 100,  30, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'marriage',                            'STRING',   '婚姻状况',         0, 100,  31, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'native_place',                        'STRING',   '籍贯',             0, 100,  32, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'gender_code',                         'STRING',   '性别编码',         0,  50,  33, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'gender',                              'STRING',   '性别',             0,  50,  34, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'actual_formal_date',                  'DATETIME', '转正日期',         0,   0,  35, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'last_work_date',                      'DATETIME', '最后工作日',       0,   0,  36, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'manage_user_id',                      'STRING',   '直属上级用户ID',   0, 100,  37, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'manage_staff_no',                     'STRING',   '直属上级工号',     0, 100,  38, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'manage_staff_name',                   'STRING',   '直属上级姓名',     0, 200,  39, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'tutor_user_id',                       'STRING',   '导师用户ID',       0, 100,  40, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'tutor_staff_no',                      'STRING',   '导师工号',         0, 100,  41, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'tutor_staff_name',                    'STRING',   '导师姓名',         0, 200,  42, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'post_code',                           'STRING',   '岗位编码',         0, 100,  43, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'post_name',                           'STRING',   '岗位名称',         0, 200,  44, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'post_type_code',                      'STRING',   '岗位类型编码',     0, 100,  45, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'post_type',                           'STRING',   '岗位类型',         0, 100,  46, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'department_code',                     'STRING',   '部门编码',         0, 100,  47, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'department_name',                     'STRING',   '部门名称',         0, 200,  48, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'one_department_code',                 'STRING',   '一级部门编码',     0, 100,  49, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'two_department_code',                 'STRING',   '二级部门编码',     0, 100,  50, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'three_department_code',               'STRING',   '三级部门编码',     0, 100,  51, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'four_department_code',                'STRING',   '四级部门编码',     0, 100,  52, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'five_department_code',                'STRING',   '五级部门编码',     0, 100,  53, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'six_department_code',                 'STRING',   '六级部门编码',     0, 100,  54, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'seven_department_code',               'STRING',   '七级部门编码',     0, 100,  55, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'eight_department_code',               'STRING',   '八级部门编码',     0, 100,  56, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'nine_department_code',                'STRING',   '九级部门编码',     0, 100,  57, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'ten_department_code',                 'STRING',   '十级部门编码',     0, 100,  58, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'one_department_name',                 'STRING',   '一级部门名称',     0, 200,  59, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'two_department_name',                 'STRING',   '二级部门名称',     0, 200,  60, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'three_department_name',               'STRING',   '三级部门名称',     0, 200,  61, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'four_department_name',                'STRING',   '四级部门名称',     0, 200,  62, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'five_department_name',                'STRING',   '五级部门名称',     0, 200,  63, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'six_department_name',                 'STRING',   '六级部门名称',     0, 200,  64, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'seven_department_name',               'STRING',   '七级部门名称',     0, 200,  65, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'eight_department_name',               'STRING',   '八级部门名称',     0, 200,  66, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'nine_department_name',                'STRING',   '九级部门名称',     0, 200,  67, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'ten_department_name',                 'STRING',   '十级部门名称',     0, 200,  68, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'organization_type_code',              'STRING',   '编制类型编码',     0, 100,  69, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'organization_type',                   'STRING',   '编制类型',         0, 100,  70, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'computer_type_code',                  'STRING',   '电脑类型编码',     0, 100,  71, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'computer_type',                       'STRING',   '电脑类型',         0, 100,  72, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'country_code',                        'STRING',   '国家编码',         0, 100,  73, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'permanent_country_and_area',          'STRING',   '常驻国家地区',     0, 100,  74, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'permanent_country_and_area_code',     'STRING',   '常驻国家地区编码', 0, 100,  75, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'vender_company',                      'STRING',   '供应商公司',       0, 200,  76, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'employment_type_code',                'STRING',   '用工类型编码',     0, 100,  77, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'emp_id',                              'INT',      '雇员ID',           0,   0,  78, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'english_country_and_area',            'STRING',   '国家地区(英文)',    0, 100,  79, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'english_permanent_country_and_area',  'STRING',   '常驻国家地区(英文)', 0, 100, 80, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'pay_subject_code',                    'STRING',   '薪资主体编码',     0, 100,  81, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'pay_subject',                         'STRING',   '薪资主体',         0, 200,  82, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'is_dept_manage',                      'INT',      '是否部门负责人',   0,   0,  83, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'is_dept_portion_manage',              'INT',      '是否分管负责人',   0,   0,  84, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'staff_management_jurisdiction',       'STRING',   '人事管辖范围',     0, 100,  85, 0, 'system', 'system'),
+('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'hcm_payload_json',                    'TEXT',     'HCM原始数据',      0,   0,  86, 0, 'system', 'system');
