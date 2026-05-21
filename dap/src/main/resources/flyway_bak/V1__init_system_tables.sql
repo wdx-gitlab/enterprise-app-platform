@@ -20,10 +20,9 @@ CREATE TABLE IF NOT EXISTS dap_sys_subject (
     updated_at  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     created_by  VARCHAR(64)  NOT NULL DEFAULT '',
     updated_by  VARCHAR(64)  NOT NULL DEFAULT '',
-    UNIQUE KEY  uk_subject_code (code)
+    UNIQUE KEY  uk_subject_code (code),
+    INDEX idx_subject_tenant_app (tenant_id, app_code)
 );
-
-CREATE INDEX idx_subject_tenant_app ON dap_sys_subject (tenant_id, app_code);
 
 -- ============================================================
 -- dap_sys_metadata_config — 元数据字段配置
@@ -47,10 +46,9 @@ CREATE TABLE IF NOT EXISTS dap_sys_metadata_config (
     updated_at   DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     created_by   VARCHAR(64)  NOT NULL DEFAULT '',
     updated_by   VARCHAR(64)  NOT NULL DEFAULT '',
-    UNIQUE KEY   uk_subject_field (subject_id, field_name)
+    UNIQUE KEY   uk_subject_field (subject_id, field_name),
+    INDEX idx_metadata_subject (subject_code)
 );
-
-CREATE INDEX idx_metadata_subject ON dap_sys_metadata_config (subject_code);
 
 -- ============================================================
 -- dap_sys_sync_config — 同步配置
@@ -117,7 +115,6 @@ CREATE TABLE IF NOT EXISTS dap_sys_sync_log (
     created_at   DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at   DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     created_by   VARCHAR(64)  NOT NULL DEFAULT '',
-    updated_by   VARCHAR(64)  NOT NULL DEFAULT ''
+    updated_by   VARCHAR(64)  NOT NULL DEFAULT '',
+    INDEX idx_sync_log_subject_time (subject_code, created_at)
 );
-
-CREATE INDEX idx_sync_log_subject_time ON dap_sys_sync_log (subject_code, created_at);

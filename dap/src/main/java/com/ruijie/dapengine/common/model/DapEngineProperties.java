@@ -29,6 +29,9 @@ public class DapEngineProperties {
     @NestedConfigurationProperty
     private CacheProperties cache = new CacheProperties();
 
+    @NestedConfigurationProperty
+    private MigrationProperties migration = new MigrationProperties();
+
     // -------------------------------------------------------------------------
 
     @Data
@@ -117,6 +120,12 @@ public class DapEngineProperties {
          * 配置项：{@code dap.engine.cache.tree-full-load-threshold}，默认 5000。
          */
         private int treeFullLoadThreshold = 5000;
+    }
+
+    @Data
+    public static class MigrationProperties {
+        /** 是否执行 DAP Engine Flyway 迁移，默认 true；已手动管理 Schema 时可设为 false */
+        private boolean enabled = true;
     }
 
     /** 主数据写入目标存储枚举 */
