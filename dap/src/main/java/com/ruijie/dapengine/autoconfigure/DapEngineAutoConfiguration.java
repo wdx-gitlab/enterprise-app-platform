@@ -73,6 +73,7 @@ import org.springframework.cache.caffeine.CaffeineCacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -94,6 +95,7 @@ import java.util.concurrent.TimeUnit;
 @EnableScheduling
 @EnableConfigurationProperties({DapEngineProperties.class, DapEngineProperties.DataSourceProperties.class,
         RuijieAuthProperties.class})
+@Import(DapEngineAutoConfiguration.AdminWebConfiguration.class)
 @ConditionalOnProperty(prefix = "dap.engine", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class DapEngineAutoConfiguration implements InitializingBean {
 
@@ -227,6 +229,7 @@ public class DapEngineAutoConfiguration implements InitializingBean {
      */
     @Bean(name = "dapFlyway")
     @ConditionalOnMissingBean(name = "dapFlyway")
+    @ConditionalOnProperty(prefix = "dap.engine", name = "migration.enabled", havingValue = "true", matchIfMissing = true)
     public Flyway dapFlyway(DapEngineDataSource dapEngineDataSource) {
         javax.sql.DataSource ds = dapEngineDataSource.getDataSource();
         // 自愈：检查当。catalog 。dap_sys_subject 是否存在；不存在则清理 history 。Flyway 重新建表

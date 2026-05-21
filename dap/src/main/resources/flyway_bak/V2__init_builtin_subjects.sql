@@ -5,16 +5,16 @@
 -- ============================================================
 -- 1. 插入内置主题 (dap_sys_subject)
 -- ============================================================
-INSERT INTO dap_sys_subject (tenant_id, app_code, code, name, description, status, is_tree, is_built_in, is_delete, created_by, updated_by)
+INSERT IGNORE INTO dap_sys_subject (tenant_id, app_code, code, name, description, status, is_tree, is_built_in, is_delete, created_by, updated_by)
 VALUES ('', '', 'sys_user', '用户', '内置用户主数据，同步自人力系统', 1, 0, 1, 0, 'system', 'system');
 
-INSERT INTO dap_sys_subject (tenant_id, app_code, code, name, description, status, is_tree, is_built_in, is_delete, created_by, updated_by)
+INSERT IGNORE INTO dap_sys_subject (tenant_id, app_code, code, name, description, status, is_tree, is_built_in, is_delete, created_by, updated_by)
 VALUES ('', '', 'sys_org', '组织', '内置组织主数据，同步自人力系统', 1, 1, 1, 0, 'system', 'system');
 
 -- ============================================================
 -- 2. sys_org 字段元数据 (dap_sys_metadata_config)
 -- ============================================================
-INSERT INTO dap_sys_metadata_config (tenant_id, app_code, subject_id, subject_code, subject_name, field_name, field_type, field_label, required, max_length, sort_order, is_delete, created_by, updated_by) VALUES
+INSERT IGNORE INTO dap_sys_metadata_config (tenant_id, app_code, subject_id, subject_code, subject_name, field_name, field_type, field_label, required, max_length, sort_order, is_delete, created_by, updated_by) VALUES
 -- 系统字段（与 upsertSystemFields 保持一致：code/name 必有，parent_code 仅树形主题）
 ('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_org'), 'sys_org', '组织', 'code',            'STRING', '编码',     0, 128, -100, 0, 'system', 'system'),
 ('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_org'), 'sys_org', '组织', 'name',            'STRING', '名称',     0, 128,  -99, 0, 'system', 'system'),
@@ -45,7 +45,7 @@ INSERT INTO dap_sys_metadata_config (tenant_id, app_code, subject_id, subject_co
 -- ============================================================
 -- 3. sys_user 字段元数据 (dap_sys_metadata_config)
 -- ============================================================
-INSERT INTO dap_sys_metadata_config (tenant_id, app_code, subject_id, subject_code, subject_name, field_name, field_type, field_label, required, max_length, sort_order, is_delete, created_by, updated_by) VALUES
+INSERT IGNORE INTO dap_sys_metadata_config (tenant_id, app_code, subject_id, subject_code, subject_name, field_name, field_type, field_label, required, max_length, sort_order, is_delete, created_by, updated_by) VALUES
 -- 系统字段（code/name，sys_user 非树形，无 parent_code）
 ('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'code',           'STRING', '编码', 0, 128, -100, 0, 'system', 'system'),
 ('', '', (SELECT id FROM dap_sys_subject WHERE code='sys_user'), 'sys_user', '用户', 'name',           'STRING', '名称', 0, 128,  -99, 0, 'system', 'system'),

@@ -153,5 +153,11 @@
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus</artifactId>
         </dependency>
+
+        <!-- mybatis-plus 3.5.9 不再传递依赖 mybatis-spring；显式引入以提供 MapperFactoryBean 等 Spring 集成类 -->
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis-spring</artifactId>
+        </dependency>
     </dependencies>
 </project>
