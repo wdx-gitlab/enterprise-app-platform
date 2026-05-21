@@ -23,20 +23,34 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring.boot.version>2.3.12.RELEASE</spring.boot.version>
+        <!-- CVE-2022-22965 (Spring4Shell, CRITICAL): patch Spring Framework to 5.2.20 within SB 2.3.x -->
+        <spring-framework.version>5.2.20.RELEASE</spring-framework.version>
         <rjframework.version>3.0.5-SNAPSHOT</rjframework.version>
         <authz.engine.version>1.2.0-SNAPSHOT</authz.engine.version>
         <lombok.version>1.18.32</lombok.version>
-        <fastjson.version>1.2.70</fastjson.version>
+        <!-- CVE-2022-25845 (HIGH): upgrade to 1.2.83+ to fix unsafe deserialization -->
+        <fastjson.version>1.2.83</fastjson.version>
         <druid.version>1.2.23</druid.version>
-        <mybatis.plus.version>3.3.2</mybatis.plus.version>
+        <!-- CVE-2023-25330 (CRITICAL): upgrade to 3.5.3.1+ to fix SQL injection via TenantPlugin -->
+        <mybatis.plus.version>3.5.9</mybatis.plus.version>
         <caffeine.version>2.8.8</caffeine.version>
         <flyway.version>6.5.7</flyway.version>
-        <jackson.version>2.11.0</jackson.version>
+        <!-- CVE-2020-36518/CVE-2021-46877/CVE-2022-42003/CVE-2022-42004/CVE-2025-52999 (HIGH): upgrade to 2.15.4 -->
+        <jackson.version>2.15.4</jackson.version>
+        <!-- mysql:mysql-connector-java (legacy artifact, no fix available; use com.mysql:mysql-connector-j instead) -->
         <mysql.version>8.0.33</mysql.version>
+        <!-- CVE-2023-22102 (HIGH): upgrade com.mysql:mysql-connector-j to 8.2.0+ -->
+        <mysql.connector.j.version>8.3.0</mysql.connector.j.version>
         <validation.api.version>2.0.1.Final</validation.api.version>
         <hibernate.validator.version>6.2.5.Final</hibernate.validator.version>
         <maven.compiler.plugin.version>3.13.0</maven.compiler.plugin.version>
         <maven.surefire.plugin.version>3.5.2</maven.surefire.plugin.version>
+        <!-- CVE-2022-25857/CVE-2022-1471 (HIGH): upgrade snakeyaml; 1.33 is max compatible with Spring Boot 2.3.x -->
+        <snakeyaml.version>1.33</snakeyaml.version>
+        <!-- CVE-2023-6378 (HIGH): logback serialization DoS in receiver component; fix in 1.2.13 -->
+        <logback.version>1.2.13</logback.version>
+        <!-- CVE-2025-24813/CVE-2026-41293/CVE-2026-43515/CVE-2026-43512 + 18 more HIGH Tomcat CVEs; fix in 9.0.118 -->
+        <tomcat.version>9.0.118</tomcat.version>
     </properties>
 
     <dependencyManagement>
@@ -171,7 +185,7 @@
             <dependency>
                 <groupId>com.mysql</groupId>
                 <artifactId>mysql-connector-j</artifactId>
-                <version>${mysql.version}</version>
+                <version>${mysql.connector.j.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
